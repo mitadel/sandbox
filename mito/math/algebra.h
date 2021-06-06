@@ -42,6 +42,18 @@ namespace mito {
             return;
         }
 
+        // TOFIX: enable if
+        //      1) can cast T2 to T, and
+        //      2) sizeof...(T2) == S
+        template <class... T2 /*, typename std::enable_if<sizeof...(T2) == S, int>::type = 0*/>
+        Grid(T2... args) : Grid()
+        {
+            _initialize(std::make_index_sequence<S> {}, args...);
+
+            // all done
+            return;
+        }
+
         // delete constructors, operator=
         inline Grid(const Grid &) = delete;
         inline Grid(const Grid &&) = delete;
@@ -78,6 +90,12 @@ namespace mito {
             }
 
             return;
+        }
+
+        template <size_t... J, class... T2>
+        void _initialize(std::index_sequence<J...>, T2... args)
+        {
+            ((_grid[J] = args), ...);
         }
 
       public:

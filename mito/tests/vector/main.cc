@@ -38,5 +38,12 @@ main()
     mito::tensor_t<2> tensor;
     assert(tensor.size() == 4);
 
+    mito::vector_t<2> vector2 = { 1.0, 0.0 };
+    constexpr mito::vector_t<2>::index_t index2 { 0 };
+
+    assert(vector2[index2] == 1.0);
+    // QUESTION, why can't I do:
+    // assert(vector2[{ 0 }] == 0.0);
+
     return 0;
 }
