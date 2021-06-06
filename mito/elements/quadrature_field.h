@@ -4,21 +4,36 @@
 #define __MITO__QUADRATURE_FIELD__
 
 namespace mito {
-
     template <int Q, typename Y>
-    class QuadratureField : public std::vector<Y> {
+    class QuadratureField {
 
       public:
-        using T = typename type<Y>::value;
-        static constexpr int D = size<Y>::value;
+        static constexpr int D = Y::size();
+        using T = typename Y::type;
+
+      private:
+        // conventionally packed grid for {e, q, d}
+        using pack_t = pyre::grid::canonical_t<3>;
+        // of T on the heap
+        using storage_t = pyre::memory::heap_t<T>;
+        // putting it all together
+        using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
 
       public:
         /**
          * constructor
          * @param[in] elements number of elements for which data are stored
          */
-        inline QuadratureField(int nElements) : std::vector<Y>(nElements * Q), _nElements(nElements)
-        {}
+        inline QuadratureField(int nElements) :
+            _packing { { nElements, Q, D } },
+            _grid { _packing, _packing.cells() }
+        {
+            // initialize memory
+            initialize();
+
+            // all done
+            return;
+        }
 
         // destructor
         ~QuadratureField() {}
@@ -28,17 +43,23 @@ namespace mito {
          * mutator to an array of data stored at a quadrature point of an element
          * @param[in] e index of the element
          * @param[in] q local index of the quadrature point in the element
-         * @return a pointer to the data
+         * @return the data
          */
-        inline Y & operator()(int e, int q) { return (*this)[e * Q + q]; }
+        // QUESTION: how do we make the const version of this???
+        inline Y operator()(int e, int q)
+        {
+            // slices at {e, q}
+            pack_t::index_type index { e, q, 0 };
 
-        /**
-         * accessor to an array of data stored at a quadrature point of an element
-         * @param[in] e index of the element
-         * @param[in] q local index of the quadrature point in the element
-         * @return a const pointer to the first value of the array of data
-         */
-        inline const Y & operator()(int e, int q) const { return (*this)[e * Q + q]; }
+            // shape dictated by D (Y::size())
+            pack_t::shape_type shape { 0, 0, D };
+
+            // slice the grid
+            auto sliced_grid = _grid.template slice<1>(index, shape);
+
+            //
+            return Y(sliced_grid);
+        }
 
         /**
          * accessor for the size of array stored per quadrature point per element
@@ -61,10 +82,12 @@ namespace mito {
         /**
          * reset all entries to zero
          */
-        inline void reinit()
+        inline void initialize()
         {
-            // TOFIX
-            std::fill(this->begin(), this->end(), 0.0);
+            for (const auto & idx : _grid.layout()) {
+                _grid[idx] = 0.0;
+            }
+
             return;
         }
 
@@ -76,6 +99,11 @@ namespace mito {
       private:
         // number of elements
         int _nElements;
+
+        // packing
+        pack_t _packing;
+        // instantiate the grid
+        grid_t _grid;
 
         // name of the field
         std::string _name;
