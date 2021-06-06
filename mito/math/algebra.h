@@ -3,15 +3,24 @@
 
 namespace mito {
 
+    template <typename... Args>
+    constexpr auto multiply(Args &&... args)
+    {
+        return (args * ...);
+    }
+
     template <typename T, int... I>
     class Grid {
 
       public:
+        // compute the number of degrees of freedom of the
         static constexpr auto N = sizeof...(I);
+        // compute the number of cells of the packing
+        static constexpr auto S = multiply(I...);
         using type = T;
 
       public:
-        // D-dim conventionally packed grid
+        // N-dim conventionally packed grid
         using pack_t = pyre::grid::canonical_t<N>;
         // T on the heap
         using storage_t = pyre::memory::heap_t<T>;
@@ -22,8 +31,10 @@ namespace mito {
 
       public:
         // default constructor
-        inline Grid() : _packing { { I... } }, _grid { _packing, _packing.cells() }
+        inline Grid() : _packing { { I... } }, _grid { _packing, S }
         {
+            assert(S == _packing.cells());
+
             // initialize memory
             initialize();
 
@@ -70,7 +81,7 @@ namespace mito {
         }
 
       public:
-        constexpr auto size() { return _packing.cells(); }
+        constexpr auto size() { return S; }
 
       private:
         // packing
