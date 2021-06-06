@@ -68,6 +68,9 @@ namespace mito {
         inline const T & operator[](index_t i) const { return _grid[i]; }
         inline T & operator[](index_t i) { return _grid[i]; }
 
+        inline const T & operator[](int i) const { return _grid[i]; }
+        inline T & operator[](int i) { return _grid[i]; }
+
         inline void operator+=(const mito::Grid<T, I...> & rhs)
         {
             // loop on components
