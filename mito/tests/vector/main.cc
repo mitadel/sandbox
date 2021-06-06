@@ -22,6 +22,7 @@ main()
     b = 11.0;
     std::cout << "grid = " << grid[index] << std::endl;
     assert(grid[index] == 11.0);
+    assert((grid[{ 0, 0, 0, 1 }] == 0.0));
 
     grid += grid;
     assert(grid[index] == 22.0);

@@ -22,7 +22,14 @@ namespace mito {
 
       public:
         // default constructor
-        inline Grid() : _packing { { I... } }, _grid { _packing, _packing.cells() } {}
+        inline Grid() : _packing { { I... } }, _grid { _packing, _packing.cells() }
+        {
+            // initialize memory
+            initialize();
+
+            // all done
+            return;
+        }
 
         // delete constructors, operator=
         inline Grid(const Grid &) = delete;
@@ -47,6 +54,18 @@ namespace mito {
             }
 
             // all done
+            return;
+        }
+
+        /**
+         * reset all entries to zero
+         */
+        inline void initialize()
+        {
+            for (const auto & idx : _grid.layout()) {
+                _grid[idx] = 0.0;
+            }
+
             return;
         }
 
