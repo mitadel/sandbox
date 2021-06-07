@@ -109,16 +109,91 @@ namespace mito {
         grid_t _grid;
     };
 
-    // TOFIX
-    // template <class T = real>
-    // using scalar_t = Grid<T, 1>;
+    // template specialization for scalars
+    template <typename T>
+    class Grid<T, 1> {
+      public:
+        // compute the number of degrees of freedom of the
+        static constexpr auto N = 1;
+        // compute the number of cells of the packing
+        static constexpr auto S = 1;
+        using type = T;
+
+      public:
+        // N-dim conventionally packed grid
+        using pack_t = pyre::grid::canonical_t<N>;
+        // T on the heap
+        using storage_t = pyre::memory::heap_t<T>;
+        // putting it all together
+        using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
+        // index typedef
+        using index_t = pyre::grid::index_t<N>;
+
+      public:
+        // default constructor
+        inline Grid() : _packing { { 1 } }, _grid { _packing, S }
+        {
+            assert(S == _packing.cells());
+
+            // initialize memory
+            _grid[0] = T(0);
+
+            // all done
+            return;
+        }
+
+        Grid(T arg) : Grid()
+        {
+            _grid[0] = arg;
+
+            // all done
+            return;
+        }
+
+        // delete constructors, operator=
+        // TOFIX: double check if default implementation will do
+        inline Grid(const Grid &) = default;
+        inline Grid(const Grid &&) = delete;
+        inline const Grid & operator=(const Grid &) = delete;
+        inline const Grid & operator=(const Grid &&) = delete;
+
+        Grid(const grid_t & grid) : _grid(grid), _packing(grid.layout()) {}
+        Grid(grid_t && grid) : _grid(grid), _packing(grid.layout()) {}
+        ~Grid() {}
+
+        operator T() const { return _grid[0]; }
+
+      public:
+        inline const T & operator[](index_t i) const { return _grid[i]; }
+        inline T & operator[](index_t i) { return _grid[i]; }
+
+        inline const T & operator[](int i) const { return _grid[i]; }
+        inline T & operator[](int i) { return _grid[i]; }
+
+        inline void operator+=(const mito::Grid<T, 1> & rhs)
+        {
+            // component-wise operator+=
+            _grid[0] += rhs[0];
+
+            // all done
+            return;
+        }
+
+      public:
+        constexpr auto size() { return S; }
+
+      private:
+        // packing
+        pack_t _packing;
+        // grid
+        grid_t _grid;
+    };
+
+    template <class T = real>
+    using scalar_t = Grid<T, 1>;
 
     template <int D, class T = real>
     using vector_t = Grid<T, D>;
-
-    // TOFIX
-    template <class T = real>
-    using scalar_t = vector_t<1>;
 
     template <int D1, int D2 = D1, class T = real>
     using tensor_t = Grid<T, D1, D2>;
