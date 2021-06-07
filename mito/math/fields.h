@@ -9,12 +9,13 @@ namespace mito {
 
     // TODO: Add operator+ for scalar fields and reals
 
-    // f(X,t) with (X \in R^D, t \in R) -> R
+    // f(X,t) with (X \in R^D, t \in R) -> Y
     template <typename X, typename Y = real>
     class Field {
 
         // dimension of the X space
-        static constexpr int D = size<X>::value;
+        // static constexpr int D = size<X>::value;
+        static constexpr int D = Y::S;
 
         // typedef for a scalar valued function
         using function_t = Function<X, Y>;
@@ -107,18 +108,19 @@ namespace mito {
         std::array<function_t, D> _Df;
     };
 
-    template <dim_t D, int N>
+    template <int D, int N>
     using VectorField = Field<vector<D>, vector<N>>;
 
-    template <dim_t D>
-    using ScalarField = Field<vector<D>, real>;
+    template <int D>
+    using ScalarField = Field<vector<D>, Grid<mito::real, 1> /*TOFIX */>;
 
     template <typename X, typename Y, std::size_t... I>
     inline auto _dSum(
         const Field<X, Y> & fieldA, const Field<X, Y> & fieldB, std::index_sequence<I...>)
     {
         // dimension of the X space
-        static constexpr int D = size<X>::value;
+        // static constexpr int D = size<X>::value;
+        static constexpr int D = Y::S;
 
         std::array<Function<X, Y>, D> Df = { (fieldA.Df(I) + fieldB.Df(I))... };
         return Df;
@@ -128,7 +130,8 @@ namespace mito {
     auto operator+(const Field<X, Y> & fieldA, const Field<X, Y> & fieldB)
     {
         // dimension of the X space
-        static constexpr int D = size<X>::value;
+        // static constexpr int D = size<X>::value;
+        static constexpr int D = Y::S;
 
         return Field<X, Y>(
             fieldA.f() + fieldB.f(), _dSum(fieldA, fieldB, std::make_index_sequence<D> {}));
@@ -136,11 +139,11 @@ namespace mito {
 
     // function to compute the gradient of a scalar field with respect to the reference
     // configuration at point x
-    template <dim_t D>
+    template <int D>
     inline auto grad(const ScalarField<D> & field, const vector<D> & x)
     {
         vector<D> result;
-        for (dim_t i = 0; i < D; ++i) {
+        for (int i = 0; i < D; ++i) {
             result[i] = field.Df(i)(x);
         }
         return result;
@@ -148,7 +151,7 @@ namespace mito {
 
     // helper function to compute the gradient of a vector field with respect to the reference
     // configuration (template with index sequence)
-    template <dim_t D, std::size_t... I>
+    template <int D, std::size_t... I>
     inline VectorField<D, D> _grad(const ScalarField<D> & field, std::index_sequence<I...>)
     {
         // TOFIX: capturing field by copy or by reference? Is it better to capture
@@ -159,18 +162,18 @@ namespace mito {
 
     // function to compute the gradient of a vector field with respect to the reference
     // configuration
-    template <dim_t D>
+    template <int D>
     inline VectorField<D, D> grad(const ScalarField<D> & field)
     {
         return _grad(field, std::make_index_sequence<D> {});
     }
 
     // function to compute the Divergence of a vector field at point X
-    template <dim_t D>
+    template <int D>
     inline real div(const VectorField<D, D> & field, const vector<D> & X)
     {
         real result = 0.0;
-        for (dim_t i = 0; i < D; ++i) {
+        for (int i = 0; i < D; ++i) {
             result += field.Df(i)(X)[i];
         }
         return result;
@@ -178,7 +181,7 @@ namespace mito {
 
     // helper function to compute the divergence of a vector field with respect to the reference
     // configuration at point X (template with index sequence)
-    template <dim_t D, std::size_t... I>
+    template <int D, std::size_t... I>
     inline ScalarField<D> _div(const VectorField<D, D> & field, std::index_sequence<I...>)
     {
         // TOFIX: capturing field by copy or by reference? Is it better to capture
@@ -189,7 +192,7 @@ namespace mito {
 
     // function to compute the divergence of a vector field with respect to the reference
     // configuration at point X
-    template <dim_t D>
+    template <int D>
     inline ScalarField<D> div(const VectorField<D, D> & field)
     {
         return _div(field, std::make_index_sequence<D> {});

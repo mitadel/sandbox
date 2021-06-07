@@ -7,11 +7,11 @@
 namespace mito {
 
     // templatized typedef for functors
-    template <typename X, typename Y = real>
+    template <typename X, typename Y = Grid<real, 1> /* TOFIX */>
     using functor = std::function<Y(const X &)>;
 
     // We need a class function to explicitly put the return value Y in the template
-    template <typename X, typename Y = real>
+    template <typename X, typename Y = Grid<real, 1> /* TOFIX */>
     class Function {
 
       public:

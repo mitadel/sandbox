@@ -8,23 +8,42 @@
 #include <cassert>
 #include <math.h>
 
+#include "math/algebra.h"
+
 // https://stackoverflow.com/questions/4295432/typedef-function-pointer
 // https://stackoverflow.com/questions/7787500/how-to-write-a-function-that-takes-a-functor-as-an-argument
 
 // TOFIX: Consider using tuples when possible as opposed to std::array and std::vector
 
 namespace mito {
+
     using dim_t = size_t;
     // typedef for scalars
     using real = double;
+
+    template <int D, class T = real>
+    using vector_t = Grid<T, D>;
+
+    // TOFIX
+    template <class T = real>
+    using scalar_t = Grid<T, 1>;
+
+    template <int D1, int D2 = D1, class T = real>
+    using tensor_t = Grid<T, D1, D2>;
+
+    // TOFIX: remove redundant {vector}
     // typedef for vectors
     template <dim_t D, class T = real>
-    using vector = std::array<T, D>;
-    template <dim_t D>
-    using point_t = mito::vector<D>;    // Point<D>;
+    using vector = vector_t<D, T>;
+
+    // TOFIX: remove redundant {tensor}
     // typedef for tensors
     template <dim_t D1, dim_t D2 = D1>
-    using tensor = std::array<real, D1 * D2>;
+    using tensor = tensor_t<D1, D2, real>;
+
+    template <dim_t D>
+    using point_t = mito::vector<D>;    // Point<D>;
+
     // templatized typedef for fields
     template <typename X, typename Y>
     using field = Y (*)(const X &, real);
@@ -314,7 +333,7 @@ namespace mito {
 namespace mito {
     template <typename T>
     struct size {
-        static constexpr int value = std::tuple_size<T>::value;
+        static constexpr int value = T::S;
     };
 
     template <>
@@ -334,7 +353,7 @@ namespace mito {
 
     template <typename T>
     struct type {
-        using value = typename T ::value_type;
+        using value = typename T ::type;
     };
 
     template <>

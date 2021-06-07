@@ -53,6 +53,7 @@ namespace mito {
         }
 
         // delete constructors, operator=
+        // TOFIX: double check if default implementation will do
         Grid(const Grid &) = default;
         Grid(const Grid &&) = delete;
         const Grid & operator=(const Grid &) = delete;
@@ -188,15 +189,6 @@ namespace mito {
         // grid
         grid_t _grid;
     };
-
-    template <class T = real>
-    using scalar_t = Grid<T, 1>;
-
-    template <int D, class T = real>
-    using vector_t = Grid<T, D>;
-
-    template <int D1, int D2 = D1, class T = real>
-    using tensor_t = Grid<T, D1, D2>;
 
 }    // namespace mito
 

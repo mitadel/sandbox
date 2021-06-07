@@ -38,7 +38,7 @@ namespace mito {
         for (const auto & element : elements) {
 
             // reinitialize verticesTensor for a new element
-            std::fill(verticesTensor.begin(), verticesTensor.end(), 0.0);
+            verticesTensor.initialize();
 
             // use a set to collect vertices without repeated entries
             std::set<const vertex_t *> vertices;
