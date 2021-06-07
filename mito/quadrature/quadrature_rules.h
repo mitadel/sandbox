@@ -6,10 +6,13 @@
 
 namespace mito {
 
+    template <int D>
+    using quadrature_point_t = std::array<mito::real, D>;
+
     template <class quadrature_t, class element_t, int r>
     struct QuadratureRulesFactory {
         static constexpr auto degreeExactness = r;
-        static constexpr dim_t parametricDim = element_t::parametricDim;
+        static constexpr int parametricDim = element_t::parametricDim;
         static constexpr auto Get();
 
       private:
@@ -20,12 +23,14 @@ namespace mito {
         static constexpr auto name = "GAUSS";
     };
 
-    template <dim_t parametricDim, int Q>
-    class quadrature_array_t : public std::array<std::tuple<vector<parametricDim>, double>, Q> {
+    template <int parametricDim, int Q>
+    class quadrature_array_t :
+        public std::array<std::tuple<quadrature_point_t<parametricDim>, double>, Q> {
       public:
         template <typename... T>
         constexpr quadrature_array_t(T &&... t) :
-            std::array<std::tuple<vector<parametricDim>, double>, Q> { std::forward<T>(t)... }
+            std::array<std::tuple<quadrature_point_t<parametricDim>, double>, Q> { std::forward<T>(
+                t)... }
         {}
 
         constexpr auto getPoint(int q) const { return std::get<0>((*this)[q]); }
@@ -70,7 +75,8 @@ namespace mito {
     {
         return quadrature_array_t<parametricDim, 1 /* nPoints */>(
             { /*{point}, weight*/
-              std::make_tuple(vector<parametricDim>({ 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0 }), 1.0) });
+              std::make_tuple(
+                  quadrature_point_t<parametricDim>({ 1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0 }), 1.0) });
     }
 
     template <>
@@ -79,11 +85,14 @@ namespace mito {
         return quadrature_array_t<parametricDim, 3 /* nPoints */>(
             { /*{point}, weight*/
               std::make_tuple(
-                  vector<parametricDim>({ 2.0 / 3.0, 1.0 / 6.0, 1.0 / 6.0 }), 1.0 / 3.0),
+                  quadrature_point_t<parametricDim>({ 2.0 / 3.0, 1.0 / 6.0, 1.0 / 6.0 }),
+                  1.0 / 3.0),
               std::make_tuple(
-                  vector<parametricDim>({ 1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0 }), 1.0 / 3.0),
+                  quadrature_point_t<parametricDim>({ 1.0 / 6.0, 2.0 / 3.0, 1.0 / 6.0 }),
+                  1.0 / 3.0),
               std::make_tuple(
-                  vector<parametricDim>({ 1.0 / 6.0, 1.0 / 6.0, 2.0 / 3.0 }), 1.0 / 3.0) });
+                  quadrature_point_t<parametricDim>({ 1.0 / 6.0, 1.0 / 6.0, 2.0 / 3.0 }),
+                  1.0 / 3.0) });
     }
 
     template <>
@@ -91,7 +100,7 @@ namespace mito {
     {
         return quadrature_array_t<parametricDim, 1 /* nPoints */>(
             { /*{point}, weight*/
-              std::make_tuple(vector<parametricDim>({ 1.0, 1.0 }), 1.0) });
+              std::make_tuple(quadrature_point_t<parametricDim>({ 1.0, 1.0 }), 1.0) });
     }
 
     template <>
@@ -104,8 +113,10 @@ namespace mito {
 
         return quadrature_array_t<parametricDim, 2 /* nPoints */>(
             { /*{point}, weight*/
-              std::make_tuple(vector<parametricDim>({ sqrt3 / 3.0, 1.0 - sqrt3 / 3.0 }), 0.5),
-              std::make_tuple(vector<parametricDim>({ 1.0 - sqrt3 / 3.0, sqrt3 / 3.0 }), 0.5) });
+              std::make_tuple(
+                  quadrature_point_t<parametricDim>({ sqrt3 / 3.0, 1.0 - sqrt3 / 3.0 }), 0.5),
+              std::make_tuple(
+                  quadrature_point_t<parametricDim>({ 1.0 - sqrt3 / 3.0, sqrt3 / 3.0 }), 0.5) });
     }
 
 }    // namespace mito
