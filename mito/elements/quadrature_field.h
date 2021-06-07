@@ -45,7 +45,6 @@ namespace mito {
          * @param[in] q local index of the quadrature point in the element
          * @return the data
          */
-        // QUESTION: how do we make the const version of this???
         inline Y operator()(int e, int q)
         {
             // slices at {e, q}
@@ -54,8 +53,29 @@ namespace mito {
             // shape dictated by D (Y::size())
             pack_t::shape_type shape { 0, 0, D };
 
+            // TODO: activate isConst template parameter once it is implemented in pyre
             // slice the grid
-            auto sliced_grid = _grid.template slice<1>(index, shape);
+            auto sliced_grid =
+                _grid.template slice</* sliceRank = */ 1 /*, */ /*isConst = */ /* false */>(
+                    index, shape);
+
+            //
+            return Y(sliced_grid);
+        }
+
+        inline Y operator()(int e, int q) const
+        {
+            // slices at {e, q}
+            pack_t::index_type index { e, q, 0 };
+
+            // shape dictated by D (Y::size())
+            pack_t::shape_type shape { 0, 0, D };
+
+            // TODO: activate isConst template parameter once it is implemented in pyre
+            // slice the grid
+            auto sliced_grid =
+                _grid.template slice</* sliceRank = */ 1 /*, */ /*isConst = */ /* true */>(
+                    index, shape);
 
             //
             return Y(sliced_grid);
