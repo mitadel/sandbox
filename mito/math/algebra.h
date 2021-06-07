@@ -33,8 +33,6 @@ namespace mito {
         // default constructor
         inline Grid() : _packing { { I... } }, _grid { _packing, S }
         {
-            assert(S == _packing.cells());
-
             // initialize memory
             initialize();
 
