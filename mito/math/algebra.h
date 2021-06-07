@@ -55,14 +55,14 @@ namespace mito {
         }
 
         // delete constructors, operator=
-        inline Grid(const Grid &) = delete;
-        inline Grid(const Grid &&) = delete;
-        inline const Grid & operator=(const Grid &) = delete;
-        inline const Grid & operator=(const Grid &&) = delete;
+        Grid(const Grid &) = default;
+        Grid(const Grid &&) = delete;
+        const Grid & operator=(const Grid &) = delete;
+        const Grid & operator=(const Grid &&) = delete;
 
-        Grid(const grid_t & grid) : _grid(grid), _packing(grid.layout()) {}
-        Grid(grid_t && grid) : _grid(grid), _packing(grid.layout()) {}
-        ~Grid() {}
+        inline Grid(const grid_t & grid) : _grid(grid), _packing(grid.layout()) {}
+        inline Grid(grid_t && grid) : _grid(grid), _packing(grid.layout()) {}
+        inline ~Grid() {}
 
       public:
         inline const T & operator[](index_t i) const { return _grid[i]; }
