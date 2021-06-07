@@ -89,7 +89,7 @@ namespace mito {
         inline void initialize()
         {
             for (const auto & idx : _grid.layout()) {
-                _grid[idx] = 0.0;
+                _grid[idx] = T(0);
             }
 
             return;
