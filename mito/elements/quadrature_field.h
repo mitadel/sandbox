@@ -8,7 +8,9 @@ namespace mito {
     class QuadratureField {
 
       public:
-        static constexpr int D = Y::size();
+        // using T = typename type<Y>::value;
+        // static constexpr int D = size<Y>::value;
+        static constexpr int D = Y::S;
         using T = typename Y::type;
 
       private:
