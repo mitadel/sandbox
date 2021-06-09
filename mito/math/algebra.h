@@ -14,9 +14,9 @@ namespace mito {
 
       public:
         // compute the number of degrees of freedom of the
-        static constexpr auto N = sizeof...(I);
+        static constexpr int N = sizeof...(I);
         // compute the number of cells of the packing
-        static constexpr auto S = multiply(I...);
+        static constexpr int S = multiply(I...);
         using type = T;
 
       public:
@@ -115,9 +115,9 @@ namespace mito {
     class Grid<T, 1> {
       public:
         // compute the number of degrees of freedom of the
-        static constexpr auto N = 1;
+        static constexpr int N = 1;
         // compute the number of cells of the packing
-        static constexpr auto S = 1;
+        static constexpr int S = 1;
         using type = T;
 
       public:
@@ -134,7 +134,6 @@ namespace mito {
         // default constructor
         inline Grid() : _packing { { 1 } }, _grid { _packing, S }
         {
-            assert(S == _packing.cells());
 
             // initialize memory
             _grid[0] = T(0);
