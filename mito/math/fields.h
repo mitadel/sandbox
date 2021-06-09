@@ -15,7 +15,7 @@ namespace mito {
 
         // dimension of the X space
         // static constexpr int D = size<X>::value;
-        static constexpr int D = Y::S;
+        static constexpr int D = X::S;
 
         // typedef for a scalar valued function
         using function_t = Function<X, Y>;
@@ -119,8 +119,7 @@ namespace mito {
         const Field<X, Y> & fieldA, const Field<X, Y> & fieldB, std::index_sequence<I...>)
     {
         // dimension of the X space
-        // static constexpr int D = size<X>::value;
-        static constexpr int D = Y::S;
+        static constexpr int D = X::S;
 
         std::array<Function<X, Y>, D> Df = { (fieldA.Df(I) + fieldB.Df(I))... };
         return Df;
@@ -130,8 +129,7 @@ namespace mito {
     auto operator+(const Field<X, Y> & fieldA, const Field<X, Y> & fieldB)
     {
         // dimension of the X space
-        // static constexpr int D = size<X>::value;
-        static constexpr int D = Y::S;
+        static constexpr int D = X::S;
 
         return Field<X, Y>(
             fieldA.f() + fieldB.f(), _dSum(fieldA, fieldB, std::make_index_sequence<D> {}));
