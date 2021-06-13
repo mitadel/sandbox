@@ -61,7 +61,7 @@ namespace mito {
                 _grid.template slice</* sliceRank = */ 1 /*, */ /*isConst = */ /* false */>(
                     index, shape);
 
-            //
+            // all done
             return Y(sliced_grid);
         }
 
@@ -93,7 +93,7 @@ namespace mito {
          * accessor for the number of elements
          * @return the number of elements
          */
-        inline int n_elements() const { return _nElements; }
+        inline int n_elements() const { return _grid.layout().shape()[0]; }
 
         /*
          * accessor for the quadrature points per element
@@ -119,9 +119,6 @@ namespace mito {
         inline std::string name() const { return _name; }
 
       private:
-        // number of elements
-        int _nElements;
-
         // packing
         pack_t _packing;
         // instantiate the grid
