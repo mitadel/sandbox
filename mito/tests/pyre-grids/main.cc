@@ -19,15 +19,19 @@ namespace mito {
         // putting it all together
         using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
 
-        inline Vector() : _packing { { D } }, _grid { _packing, _packing.cells() } {}
+        inline Vector() : Vector(pack_t { { D } }) {}
 
+      private:
+        inline Vector(const pack_t & packing) : _grid { packing, packing.cells() } {}
+
+      public:
         // inline Vector(const Vector &) = delete;
         // inline Vector(const Vector &&) = delete;
         // inline const Vector & operator=(const Vector &) = delete;
         // inline const Vector & operator=(const Vector &&) = delete;
 
-        Vector(const grid_t & grid) : _grid(grid), _packing(grid.layout()) {}
-        Vector(grid_t && grid) : _grid(grid), _packing(grid.layout()) {}
+        Vector(const grid_t & grid) : _grid(grid) {}
+        Vector(grid_t && grid) : _grid(grid) {}
         ~Vector() {}
 
         static constexpr int size() { return D; }
@@ -37,8 +41,6 @@ namespace mito {
         inline T & operator[](int i) { return _grid[{ i }]; }
 
       private:
-        // packing
-        pack_t _packing;
         // grid
         grid_t _grid;
     };
@@ -49,22 +51,28 @@ namespace mito {
         static constexpr int D = Y::size();
         using T = typename Y::type;
 
+        // conventionally packed grid for {e, q, d}
+        using pack_t = pyre::grid::canonical_t<3>;
+        // of Y on the heap
+        using storage_t = pyre::memory::heap_t<T>;
+        // putting it all together
+        using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
+
       public:
         /**
          * constructor
          * @param[in] elements number of elements for which data are stored
          */
         inline QuadratureFieldGrid(int nElements) :
-            _packing { { nElements, Q, D } },
-            _grid { _packing, _packing.cells() }
-        {
-            for (const auto & idx : _grid.layout()) {
-                _grid[idx] = 10.0;
-            }
+            QuadratureFieldGrid(nElements, pack_t { { nElements, Q, D } })
+        {}
 
-            return;
-        }
+      private:
+        inline QuadratureFieldGrid(int nElements, const pack_t & packing) :
+            _grid { packing, packing.cells() }
+        {}
 
+      public:
         // destructor
         ~QuadratureFieldGrid() {}
 
@@ -118,7 +126,7 @@ namespace mito {
          * accessor for the number of elements
          * @return the number of elements
          */
-        inline int n_elements() const { return _nElements; }
+        inline int n_elements() const { return _grid.layout().shape()[0]; }
 
         /*
          * accessor for the quadrature points per element
@@ -127,18 +135,6 @@ namespace mito {
         static constexpr int n_quad() { return Q; }
 
       private:
-        // number of elements
-        int _nElements;
-
-        // conventionally packed grid for {e, q, d}
-        using pack_t = pyre::grid::canonical_t<3>;
-        // of Y on the heap
-        using storage_t = pyre::memory::heap_t<T>;
-        // putting it all together
-        using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
-
-        // packing
-        pack_t _packing;
         // instantiate the grid
         grid_t _grid;
     };

@@ -27,8 +27,12 @@ namespace mito {
          * @param[in] elements number of elements for which data are stored
          */
         inline QuadratureField(int nElements) :
-            _packing { { nElements, Q, D } },
-            _grid { _packing, _packing.cells() }
+            QuadratureField(nElements, pack_t { { nElements, Q, D } })
+        {}
+
+      private:
+        inline QuadratureField(int nElements, const pack_t & packing) :
+            _grid { packing, packing.cells() }
         {
             // initialize memory
             initialize();
@@ -37,6 +41,7 @@ namespace mito {
             return;
         }
 
+      public:
         // destructor
         ~QuadratureField() {}
 
@@ -79,7 +84,7 @@ namespace mito {
                 _grid.template slice</* sliceRank = */ 1 /*, */ /*isConst = */ /* true */>(
                     index, shape);
 
-            //
+            // all done
             return Y(sliced_grid);
         }
 
@@ -119,8 +124,6 @@ namespace mito {
         inline std::string name() const { return _name; }
 
       private:
-        // packing
-        pack_t _packing;
         // instantiate the grid
         grid_t _grid;
 

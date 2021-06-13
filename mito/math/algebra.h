@@ -31,7 +31,7 @@ namespace mito {
 
       public:
         // default constructor
-        inline Grid() : _packing { { I... } }, _grid { _packing, S }
+        inline Grid() : _grid { pack_t { { I... } }, S }
         {
             // initialize memory
             initialize();
@@ -59,8 +59,8 @@ namespace mito {
         const Grid & operator=(const Grid &) = delete;
         const Grid & operator=(const Grid &&) = delete;
 
-        inline Grid(const grid_t & grid) : _grid(grid), _packing(grid.layout()) {}
-        inline Grid(grid_t && grid) : _grid(grid), _packing(grid.layout()) {}
+        inline Grid(const grid_t & grid) : _grid(grid) {}
+        inline Grid(grid_t && grid) : _grid(grid) {}
         inline ~Grid() {}
 
       public:
@@ -104,8 +104,6 @@ namespace mito {
         constexpr auto size() { return S; }
 
       private:
-        // packing
-        pack_t _packing;
         // grid
         grid_t _grid;
     };
@@ -132,9 +130,8 @@ namespace mito {
 
       public:
         // default constructor
-        inline Grid() : _packing { { 1 } }, _grid { _packing, S }
+        inline Grid() : _grid { pack_t { { 1 } }, S }
         {
-
             // initialize memory
             _grid[0] = T(0);
 
@@ -157,8 +154,8 @@ namespace mito {
         inline const Grid & operator=(const Grid &) = delete;
         inline const Grid & operator=(const Grid &&) = delete;
 
-        Grid(const grid_t & grid) : _grid(grid), _packing(grid.layout()) {}
-        Grid(grid_t && grid) : _grid(grid), _packing(grid.layout()) {}
+        Grid(const grid_t & grid) : _grid(grid) {}
+        Grid(grid_t && grid) : _grid(grid) {}
         ~Grid() {}
 
         operator T() const { return _grid[0]; }
@@ -183,8 +180,6 @@ namespace mito {
         constexpr auto size() { return S; }
 
       private:
-        // packing
-        pack_t _packing;
         // grid
         grid_t _grid;
     };
