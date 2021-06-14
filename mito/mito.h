@@ -49,79 +49,79 @@ namespace mito {
     using field = Y (*)(const X &, real);
 }
 
-// TOFIX: Something is wrong with the overloads of operator<<. Sometimes the compiler won't find
-//        the proper one and give an error.
+namespace mito {
 
-// overload operator<< for vectors and tensors
-std::ostream &
-operator<<(std::ostream & os, const mito::vector<3> & x)
-{
-    os << "(" << x[0] << ", " << x[1] << ", " << x[2] << ")";
-    return os;
-}
-
-std::ostream &
-operator<<(std::ostream & os, const mito::vector<2> & x)
-{
-    os << "(" << x[0] << ", " << x[1] << ")";
-    return os;
-}
-
-std::ostream &
-operator<<(std::ostream & os, const mito::tensor<3> & x)
-{
-    os << "(" << x[0] << ", " << x[1] << ", " << x[2] << "; " << x[3] << ", " << x[4] << ", "
-       << x[5] << "; " << x[6] << ", " << x[7] << ", " << x[8] << ")";
-    return os;
-}
-
-std::ostream &
-operator<<(std::ostream & os, const mito::tensor<2> & x)
-{
-    os << "(" << x[0] << ", " << x[1] << "; " << x[2] << ", " << x[3] << ")";
-    return os;
-}
-
-template <typename X>
-std::ostream &
-operator<<(std::ostream & os, const std::vector<X> & x)
-{
-
-    if (x.size() == 0) {
-        os << "[]";
+    // overload operator<< for vectors and tensors
+    std::ostream & operator<<(std::ostream & os, const mito::vector<3> & x)
+    {
+        os << "(" << x[0] << ", " << x[1] << ", " << x[2] << ")";
         return os;
     }
 
-    os << "[" << x[0];
-
-    for (auto i = 1; i < x.size(); ++i) {
-        os << ", " << x[i];
-    }
-
-    os << "]";
-
-    return os;
-}
-
-template <typename X, long unsigned int N>
-std::ostream &
-operator<<(std::ostream & os, const std::array<X, N> & x)
-{
-
-    if (N == 0) {
-        os << "[]";
+    std::ostream & operator<<(std::ostream & os, const mito::vector<2> & x)
+    {
+        os << "(" << x[0] << ", " << x[1] << ")";
         return os;
     }
 
-    os << "[" << x[0];
-
-    for (long unsigned int i = 1; i < N; ++i) {
-        os << ", " << x[i];
+    std::ostream & operator<<(std::ostream & os, const mito::vector<1> & x)
+    {
+        os << x[0];
+        return os;
     }
 
-    os << "]";
+    std::ostream & operator<<(std::ostream & os, const mito::tensor<3> & x)
+    {
+        os << "(" << x[0] << ", " << x[1] << ", " << x[2] << "; " << x[3] << ", " << x[4] << ", "
+           << x[5] << "; " << x[6] << ", " << x[7] << ", " << x[8] << ")";
+        return os;
+    }
 
-    return os;
+    std::ostream & operator<<(std::ostream & os, const mito::tensor<2> & x)
+    {
+        os << "(" << x[0] << ", " << x[1] << "; " << x[2] << ", " << x[3] << ")";
+        return os;
+    }
+
+    template <typename X>
+    std::ostream & operator<<(std::ostream & os, const std::vector<X> & x)
+    {
+
+        if (x.size() == 0) {
+            os << "[]";
+            return os;
+        }
+
+        os << "[" << x[0];
+
+        for (auto i = 1; i < x.size(); ++i) {
+            os << ", " << x[i];
+        }
+
+        os << "]";
+
+        return os;
+    }
+
+    template <typename X, long unsigned int N>
+    std::ostream & operator<<(std::ostream & os, const std::array<X, N> & x)
+    {
+
+        if (N == 0) {
+            os << "[]";
+            return os;
+        }
+
+        os << "[" << x[0];
+
+        for (long unsigned int i = 1; i < N; ++i) {
+            os << ", " << x[i];
+        }
+
+        os << "]";
+
+        return os;
+    }
 }
 
 namespace mito {
