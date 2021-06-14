@@ -10,7 +10,7 @@ namespace mito {
     // TODO: Add operator+ for scalar fields and reals
 
     // f(X,t) with (X \in R^D, t \in R) -> Y
-    template <typename X, typename Y = real>
+    template <typename X, typename Y = Grid<real, 1> /* TOFIX */>
     class Field {
 
         // dimension of the X space
