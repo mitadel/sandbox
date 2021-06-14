@@ -33,6 +33,8 @@ namespace mito {
         // default constructor
         inline Grid() : _grid { pack_t { { I... } }, S }
         {
+            // std::cout << "Default Constructed " << std::endl;
+
             // initialize memory
             initialize();
 
@@ -52,16 +54,63 @@ namespace mito {
             return;
         }
 
-        // delete constructors, operator=
-        // TOFIX: double check if default implementation will do
-        Grid(const Grid &) = default;
-        Grid(const Grid &&) = delete;
-        const Grid & operator=(const Grid &) = delete;
-        const Grid & operator=(const Grid &&) = delete;
+        // copy constructor (deep copy)
+        Grid(const Grid & grid) : _grid { pack_t { { I... } }, S }
+        {
+            // std::cout << "copy Constructed " << std::endl;
+            // component-wise assignment
+            for (int i = 0; i < S; ++i) {
+                _grid[i] = grid[i];
+            }
+
+            // all done
+            return;
+        }
+
+        // move constructor (shallow copy)
+        Grid(Grid && grid) = default;
+
+        // copy assignment operator
+        Grid & operator=(const Grid & rhs)
+        {
+            // assert dimensions are compatible
+            assert(this->layout().cells() == rhs.layout().cells());
+
+            // component-wise assignment
+            for (int i = 0; i < _grid.layout().cells(); ++i) {
+                _grid[i] = rhs[i];
+            }
+
+            // QUESTION: Why does this not work? lhs is not changed outside this scope
+            // component-wise assignment
+            // for (const auto & idx : _grid.layout()) {
+            //    _grid[idx] = rhs[idx];
+            //}
+
+            // all done
+            return *this;
+        }
+
+        // move assignment operator
+        Grid & operator=(Grid && rhs)
+        {
+            // assert dimensions are compatible
+            assert(this->layout().cells() == rhs.layout().cells());
+
+            // component-wise assignment
+            for (int i = 0; i < _grid.layout().cells(); ++i) {
+                _grid[i] = rhs[i];
+            }
+
+            // all done
+            return *this;
+        }
 
         inline Grid(const grid_t & grid) : _grid(grid) {}
         inline Grid(grid_t && grid) : _grid(grid) {}
-        inline ~Grid() {}
+        inline ~Grid()
+        { /*std::cout << "Destructor called" << std::endl;*/
+        }
 
       public:
         inline const T & operator[](index_t i) const { return _grid[i]; }
@@ -73,14 +122,16 @@ namespace mito {
         inline void operator+=(const mito::Grid<T, I...> & rhs)
         {
             // loop on components
-            for (const auto & idx : _grid.layout()) {
+            for (int i = 0; i < _grid.layout().cells(); ++i) {
                 // component-wise operator+=
-                _grid[idx] += rhs[idx];
+                _grid[i] += rhs[i];
             }
 
             // all done
             return;
         }
+
+        inline auto layout() const { return _grid.layout(); }
 
         /**
          * reset all entries to zero
@@ -107,6 +158,21 @@ namespace mito {
         // grid
         grid_t _grid;
     };
+
+    template <typename T, int... I>
+    inline bool operator==(const Grid<T, I...> & lhs, const Grid<T, I...> & rhs)
+    {
+        // shapes are identical by construction, so compare components
+        for (int i = 0; i < lhs.layout().cells(); ++i) {
+            // component-wise comparison
+            if (lhs[i] != rhs[i]) {
+                return false;
+            }
+        }
+
+        // all done
+        return true;
+    }
 
     // template specialization for scalars
     template <typename T>
@@ -147,12 +213,37 @@ namespace mito {
             return;
         }
 
-        // delete constructors, operator=
-        // TOFIX: double check if default implementation will do
-        inline Grid(const Grid &) = default;
-        inline Grid(const Grid &&) = delete;
-        inline const Grid & operator=(const Grid &) = delete;
-        inline const Grid & operator=(const Grid &&) = delete;
+        // copy constructor (deep copy)
+        Grid(const Grid & grid) : _grid { pack_t { { 1 } }, S }
+        {
+            _grid[0] = grid[0];
+
+            // all done
+            return;
+        }
+
+        // move constructor (shallow copy)
+        inline Grid(Grid &&) = default;
+
+        // copy assignment operator
+        Grid & operator=(const Grid & rhs)
+        {
+            // component-wise assignment
+            _grid[0] = rhs[0];
+
+            // all done
+            return *this;
+        }
+
+        // move assignment operator
+        Grid & operator=(const Grid && rhs)
+        {
+            // component-wise assignment
+            _grid[0] = rhs[0];
+
+            // all done
+            return *this;
+        }
 
         Grid(const grid_t & grid) : _grid(grid) {}
         Grid(grid_t && grid) : _grid(grid) {}
@@ -183,6 +274,12 @@ namespace mito {
         // grid
         grid_t _grid;
     };
+
+    template <typename T>
+    inline bool operator==(const Grid<T, 1> & lhs, const Grid<T, 1> & rhs)
+    {
+        return lhs[0] == rhs[0];
+    }
 
 }    // namespace mito
 
