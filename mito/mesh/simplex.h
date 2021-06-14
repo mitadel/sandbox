@@ -172,7 +172,7 @@ namespace mito {
 }    // namespace mito
 
 // overload operator<< for simplices
-template <mito::int D>
+template <int D>
 std::ostream &
 operator<<(std::ostream & os, const mito::Simplex<D> & s)
 {
