@@ -135,16 +135,21 @@ namespace mito {
             fieldA.f() + fieldB.f(), _dSum(fieldA, fieldB, std::make_index_sequence<D> {}));
     }
 
+    // helper function to compute the gradient of a vector field with respect to the reference
+    // configuration (template with index sequence)
+    template <int D, std::size_t... I>
+    inline auto _grad(const ScalarField<D> & field, const vector<D> & x, std::index_sequence<I...>)
+    {
+        // all done
+        return vector<D> { field.Df(I)(x)... };
+    }
+
     // function to compute the gradient of a scalar field with respect to the reference
     // configuration at point x
     template <int D>
     inline auto grad(const ScalarField<D> & field, const vector<D> & x)
     {
-        vector<D> result;
-        for (int i = 0; i < D; ++i) {
-            result[i] = field.Df(i)(x);
-        }
-        return result;
+        return _grad(field, x, std::make_index_sequence<D> {});
     }
 
     // helper function to compute the gradient of a vector field with respect to the reference
