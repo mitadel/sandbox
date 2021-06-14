@@ -5,7 +5,7 @@
 
 namespace mito {
 
-    template <int D>
+    template <dim_t D>
     class Mesh {
 
       private:
@@ -15,7 +15,7 @@ namespace mito {
 
         // typedef for a collection of simplices of dimension I-1
         template <size_t I>
-        using simplex_entity_collection = entity_collection<Simplex<int(I)> *>;
+        using simplex_entity_collection = entity_collection<Simplex<dim_t(I)> *>;
 
         // simplex_entity_collection<I>... expands to:
         // entity_collection<Simplex<0>*>, entity_collection<Simplex<1>*>, ...,
@@ -43,7 +43,7 @@ namespace mito {
         // std::map<std::array<Simplex<2> *, 4>, Simplex<3> *>  volumes compositions
         template <size_t I>
         using composition_map =
-            std::map<std::array<Simplex<int(I - 1)> *, I + 1>, Simplex<int(I)> *>;
+            std::map<std::array<Simplex<dim_t(I - 1)> *, I + 1>, Simplex<dim_t(I)> *>;
 
         template <typename = std::make_index_sequence<D>>
         struct composition_tuple;
@@ -131,7 +131,7 @@ namespace mito {
             return true;
         }
 
-        template <int I>
+        template <dim_t I>
         int nEntities() const
         {
             // all done
@@ -149,7 +149,7 @@ namespace mito {
          * to the element with an equivalent key pair::second is true (false) if the entity was
          * inserted (was already in the map)
          */
-        template <int I>
+        template <dim_t I>
         auto _registerEntityComposition(Simplex<I> & entity)
         {
             return std::get<I - 1>(_compositions)
@@ -166,7 +166,7 @@ namespace mito {
          * @return mito::Simplex<I>* a pointer either to the newly added entity or to the equivalent
          *                              already registered composed entity
          */
-        template <int I>
+        template <dim_t I>
         mito::Simplex<I> * _addUniqueEntity(std::array<Simplex<I - 1> *, I + 1> && composition)
         {
             // instantiate new entity with this composition
@@ -190,7 +190,7 @@ namespace mito {
             return ret.first->second;
         }
 
-        template <int I>
+        template <dim_t I>
         void _addEntity(Simplex<I> * entity)
         {
             // TOFIX: is push_back expensive even when we reserve the space? No, but we only
@@ -215,7 +215,7 @@ namespace mito {
             return;
         }
 
-        template <int I>
+        template <dim_t I>
         auto _getEntity(int n)
         {
             return std::get<I>(_entities)[n];
@@ -263,7 +263,7 @@ namespace mito {
             for (int n = 0; n < N_vertices; ++n) {
                 // instantiate new point
                 mito::point_t<D> point;
-                for (int d = 0; d < D; ++d) {
+                for (dim_t d = 0; d < D; ++d) {
                     // read point coordinates
                     fileStream >> point[d];
                 }

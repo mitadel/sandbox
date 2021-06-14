@@ -7,7 +7,7 @@
 
 namespace mito {
 
-    template <int D>
+    template <dim_t D>
     class Simplex {
 
       public:
@@ -96,7 +96,7 @@ namespace mito {
         }
 
       public:
-        static constexpr int parametricDim = D + 1;
+        static constexpr dim_t parametricDim = D + 1;
         static constexpr int nVertices = D;
 
       private:
@@ -134,7 +134,7 @@ namespace mito {
         bool sanityCheck() const { return true; }
     };
 
-    template <int D>
+    template <dim_t D>
     class OrientedSimplex : public Simplex<D> {
       public:
         OrientedSimplex(std::array<Simplex<D - 1> *, D + 1> && entities, bool orientation) :
@@ -172,7 +172,7 @@ namespace mito {
 }    // namespace mito
 
 // overload operator<< for simplices
-template <int D>
+template <mito::dim_t D>
 std::ostream &
 operator<<(std::ostream & os, const mito::Simplex<D> & s)
 {
