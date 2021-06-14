@@ -2,7 +2,7 @@
 
 namespace mito {
 
-    template <dim_t D>
+    template <int D>
     class VertexCoordinatesMap {
 
         // using map_t = std::unordered_map<std::reference_wrapper<vertex_t>, point_t<D>>;

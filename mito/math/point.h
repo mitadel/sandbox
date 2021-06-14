@@ -7,7 +7,7 @@ namespace mito {
     static constexpr auto x2 = std::integral_constant<int, 2> {};
     static constexpr auto x3 = std::integral_constant<int, 3> {};
 
-    template <dim_t D>
+    template <int D>
     class Point {
 
       private:

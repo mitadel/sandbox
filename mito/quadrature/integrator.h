@@ -10,7 +10,7 @@ namespace mito {
     // integrals of contact forces down the road. Do we have enough machinery for that?
 
     // template with respect to element type T and to degree of exactness r of quadrature rule
-    template <class quadrature_t, class element_t, int r, dim_t D>
+    template <class quadrature_t, class element_t, int r, int D>
     class Integrator {
         // quadrature_t, element_t, and r identify a specific quadrature rule
         using QuadratureRule = QuadratureRulesFactory<quadrature_t, element_t, r>;
@@ -38,7 +38,7 @@ namespace mito {
                 for (const auto & vertex : vertices) {
                     // loop on quadrature point
                     for (int q = 0; q < Q; ++q) {
-                        for (dim_t d = 0; d < D; ++d) {
+                        for (int d = 0; d < D; ++d) {
                             const auto & vertexCoordinates = _elementSet.coordinatesVertex(vertex);
                             _coordinates(e, q)[d] +=
                                 _quadratureRule.getPoint(q)[v] * vertexCoordinates[d];
@@ -70,7 +70,7 @@ namespace mito {
 
             Y result;
 
-            // TOFIX: Typedef elem_t, quad_t, dim_t so as to give a compilation error if
+            // TOFIX: Typedef elem_t, quad_t, int so as to give a compilation error if
             // misused
             //        Also: consider using p2::grid to decouple memory from indexing.
             //        Syntax is as follows:

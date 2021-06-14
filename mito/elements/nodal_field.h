@@ -84,14 +84,14 @@ namespace mito {
         }
 
         os << "[(" << nodalField(0, 0);
-        for (dim_t d = 1; d < D; ++d) {
+        for (int d = 1; d < D; ++d) {
             os << ", " << nodalField(0, d);
         }
         os << ")";
 
         for (auto i = 1; i < nodalField.nodes(); ++i) {
             os << ", (" << nodalField(i, 0);
-            for (dim_t d = 1; d < D; ++d) {
+            for (int d = 1; d < D; ++d) {
                 os << ", " << nodalField(i, d);
             }
             os << ")";

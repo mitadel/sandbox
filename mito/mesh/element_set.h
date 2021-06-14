@@ -6,12 +6,12 @@
 
 namespace mito {
 
-    template <dim_t D>
+    template <int D>
     real computeDistance(const point_t<D> & pointA, const point_t<D> & pointB)
     {
         // return the distance between the two points
         real dist2 = 0.0;
-        for (dim_t d = 0; d < D; ++d) {
+        for (int d = 0; d < D; ++d) {
             real dist_d = pointA[d] - pointB[d];
             dist2 += dist_d * dist_d;
         }
@@ -19,7 +19,7 @@ namespace mito {
         return sqrt(dist2);
     }
 
-    template <dim_t D>
+    template <int D>
     void computeSimplicesVolume(
         const std::vector<Simplex<D> *> & elements, const VertexCoordinatesMap<D> & coordinatesMap,
         std::vector<real> & volumes)
@@ -28,7 +28,7 @@ namespace mito {
         constexpr int V = int(D) + 1;
 
         // a container to store the coordinates of each vertex in a tensor
-        static tensor<mito::dim_t(V)> verticesTensor;
+        static tensor<mito::int(V)> verticesTensor;
 
         // assert memory allocation is consistent
         assert(volumes.size() == elements.size());
@@ -50,7 +50,7 @@ namespace mito {
             int v = 0;
             for (const auto & vertex : vertices) {
                 // fill up verticesTensor container
-                for (dim_t d = 0; d < D; ++d) {
+                for (int d = 0; d < D; ++d) {
                     verticesTensor[v * V + d] = coordinatesMap[vertex][d];
                 }
                 verticesTensor[v * V + D] = 1.0;
@@ -68,7 +68,7 @@ namespace mito {
         return;
     }
 
-    template <class element_t, dim_t D>
+    template <class element_t, int D>
     void computeElementsVolume(
         const std::vector<element_t *> & elements, const VertexCoordinatesMap<D> & coordinatesMap,
         std::vector<real> & volumes);
@@ -97,7 +97,7 @@ namespace mito {
         return computeSimplicesVolume<1>(elements, coordinatesMap, volumes);
     }
 
-    template <dim_t D>
+    template <int D>
     void computeSegmentsLength(
         const std::vector<segment_t *> & elements, const VertexCoordinatesMap<D> & coordinatesMap,
         std::vector<real> & length)
@@ -149,7 +149,7 @@ namespace mito {
     }
 
     // follows implementation by Kahan2014
-    template <dim_t D = 3>
+    template <int D = 3>
     void computeTriangleArea(
         const std::vector<triangle_t *> & elements, const VertexCoordinatesMap<D> & coordinatesMap,
         std::vector<real> & areas)
@@ -208,7 +208,7 @@ namespace mito {
     // derivative of the parametrization, the normal times the area differential, as the returned
     // value by a method called, say, differential?
 
-    template <class element_t, dim_t D>
+    template <class element_t, int D>
     class ElementSet {
 
       public:

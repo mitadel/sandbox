@@ -6,7 +6,7 @@
 #include <map>
 #include <time.h>
 
-template <mito::dim_t D>
+template <int D>
 bool
 LoadMesh(std::string fileName)
 {
@@ -46,7 +46,7 @@ LoadMesh(std::string fileName)
         vertex = new mito::vertex_t();
         // instantiate new point
         mito::point_t<D> point;
-        for (mito::dim_t d = 0; d < D; ++d) {
+        for (int d = 0; d < D; ++d) {
             // read point coordinates
             fileStream >> point[d];
         }

@@ -17,7 +17,6 @@
 
 namespace mito {
 
-    using dim_t = size_t;
     // typedef for scalars
     using real = double;
 
