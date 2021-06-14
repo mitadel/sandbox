@@ -276,7 +276,10 @@ namespace mito {
         inline int nElements() const { return _elements.size(); }
         inline int nVertices() const { return element_t::nVertices(); }
         inline real jacobian(int e) const { return _jacobians[e]; }
-        inline auto coordinatesVertex(const vertex_t * v) const { return _coordinatesMap[v]; }
+        inline const auto & coordinatesVertex(const vertex_t * v) const
+        {
+            return _coordinatesMap[v];
+        }
 
       private:
         void _computeJacobians()
