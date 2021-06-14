@@ -18,6 +18,8 @@ namespace mito {
         using storage_t = pyre::memory::heap_t<T>;
         // putting it all together
         using grid_t = pyre::grid::grid_t<pack_t, storage_t>;
+        // index typedef
+        using index_t = pyre::grid::index_t<1>;
 
         inline Vector() : Vector(pack_t { { D } }) {}
 
@@ -27,8 +29,29 @@ namespace mito {
       public:
         // inline Vector(const Vector &) = delete;
         // inline Vector(const Vector &&) = delete;
-        // inline const Vector & operator=(const Vector &) = delete;
-        // inline const Vector & operator=(const Vector &&) = delete;
+
+        Vector & operator=(const Vector & rhs)
+        {
+            for (int i = 0; i < _grid.layout().cells(); ++i) {
+                _grid[i] = rhs[i];
+            }
+            /*
+            for (const auto & idx : _grid.layout()) {
+                _grid[idx] = rhs[idx];
+            }*/
+            // all done
+            return *this;
+        }
+
+        Vector & operator=(const Vector && rhs)
+        {
+            for (int i = 0; i < _grid.layout().cells(); ++i) {
+                _grid[i] = rhs[i];
+            }
+
+            // all done
+            return *this;
+        }
 
         Vector(const grid_t & grid) : _grid(grid) {}
         Vector(grid_t && grid) : _grid(grid) {}
@@ -39,6 +62,8 @@ namespace mito {
 
         inline const T & operator[](int i) const { return _grid[{ i }]; }
         inline T & operator[](int i) { return _grid[{ i }]; }
+        inline const T & operator[](index_t i) const { return _grid[i]; }
+        inline T & operator[](index_t i) { return _grid[i]; }
 
       private:
         // grid
@@ -144,8 +169,23 @@ template <int Q, typename Y>
 void
 myConstFunction(const mito::QuadratureFieldGrid<Q, Y> & quadF)
 {
+#if 1
+    // this should not compile, but it does
     mito::Vector<2> myvector = quadF(0, 1);
     myvector[1] = 10;
+
+    mito::Vector<2> myvector2;
+    myvector2[0] = 0;
+    myvector2[1] = 20;
+
+    myvector = myvector2;
+#else
+    // this does not compile
+    mito::Vector<2> myvector;
+    myvector[0] = 0;
+    myvector[1] = 20;
+    quadF(0, 1) = myvector;
+#endif
     return;
 }
 
@@ -188,6 +228,8 @@ main(int argc, char * argv[])
     std::cout << myvector2[0] << "\t" << myvector2[1] << std::endl;
 
     myConstFunction(quadratureField);
+
+    std::cout << myvector2[0] << "\t" << myvector2[1] << std::endl;
 
     // all done
     return 0;
